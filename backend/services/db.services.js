@@ -1,14 +1,10 @@
-require('dotenv').config();
-
-const sql = require('mssql');
-
-console.log('DB_SERVER:', process.env.DB_SERVER);
-console.log('DB_PORT:', process.env.DB_PORT);
+import 'dotenv/config';
+import sql from 'mssql';
 
 const config = {
     user: process.env.DB_USER || 'sa',
     password: process.env.DB_PASSWORD || 'Tohid-Card@100btc',
-    server: process.env.DB_SERVER || '141.98.210.182',
+    server: process.env.DB_HOST || '141.98.210.182',
     port: parseInt(process.env.DB_PORT, 10) || 14333,
     database: process.env.DB_NAME || 'TCardDB',
     options: {
@@ -18,9 +14,6 @@ const config = {
     }
 };
 
-console.log('Database configuration:', config);
-console.log('Port type:', typeof config.port);
-
 const poolPromise = new sql.ConnectionPool(config)
     .connect()
     .then(pool => {
@@ -29,7 +22,6 @@ const poolPromise = new sql.ConnectionPool(config)
     })
     .catch(err => {
         console.error('❌ MSSQL connection error:', err);
-        console.error('Error details:', err.message);
         throw err;
     });
 
@@ -46,4 +38,25 @@ async function getUserByUsername(username) {
     }
 }
 
-module.exports = { sql, poolPromise, getUserByUsername };
+async function insertUser(username, passwordHash, salt, mobileNumber, firstName, lastName, nationalID) {
+    try {
+        const pool = await poolPromise;
+        await pool.request()
+            .input('Username', sql.NVarChar, username)
+            .input('PasswordHash', sql.NVarChar, passwordHash)
+            .input('Salt', sql.NVarChar, salt)
+            .input('MobileNumber', sql.NVarChar, mobileNumber)
+            .input('FirstName', sql.NVarChar, firstName)
+            .input('LastName', sql.NVarChar, lastName)
+            .input('NationalID', sql.NVarChar, nationalID)
+            .query(`
+                INSERT INTO Users (Username, PasswordHash, Salt, CreatedAt, MobileNumber, IsEnable, RoleID, FirstName, LastName, NationalID)
+                VALUES (@Username, @PasswordHash, @Salt, GETDATE(), @MobileNumber, 1, 1, @FirstName, @LastName, @NationalID)
+            `);
+    } catch (err) {
+        console.error('❌ Error inserting user:', err);
+        throw err;
+    }
+}
+
+export { sql, poolPromise, getUserByUsername, insertUser };

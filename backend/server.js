@@ -1,48 +1,49 @@
-import 'dotenv/config';
-import sql from 'mssql';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { poolPromise } from './services/db.services.js';
+import authRoutes from './routes/authRoutes.js';
+import { authenticateToken } from './middleware/authMiddleware.js';
 
-console.log('DB_SERVER:', process.env.DB_SERVER);
-console.log('DB_PORT:', process.env.DB_PORT);
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const config = {
-    user: process.env.DB_USER || 'sa',
-    password: process.env.DB_PASSWORD || 'Tohid-Card@100btc',
-    server: process.env.DB_SERVER || '141.98.210.182',
-    port: parseInt(process.env.DB_PORT, 10) || 14333,
-    database: process.env.DB_NAME || 'TCardDB',
-    options: {
-        encrypt: false,
-        trustServerCertificate: true,
-        connectTimeout: 30000,
-    }
-};
+// Middleware setup
+app.use(express.json());        // Parse JSON request bodies
+app.use(cookieParser());        // Parse cookies for authentication
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow frontend origin
+    credentials: true // Allow cookies/credentials
+}));
 
-console.log('Database configuration:', config);
-console.log('Port type:', typeof config.port);
+// Mount authentication routes
+app.use('/api/auth', authRoutes);
 
-const poolPromise = new sql.ConnectionPool(config)
-    .connect()
-    .then(pool => {
-        console.log('✅ MSSQL connected (singleton)');
-        return pool;
-    })
-    .catch(err => {
-        console.error('❌ MSSQL connection error:', err);
-        console.error('Error details:', err.message);
-        throw err;
-    });
+// Sample protected route to test token/user identification
+app.get('/api/protected', authenticateToken, (req, res) => {
+    res.json({ message: 'This is a protected route', user: req.user });
+});
 
-async function getUserByUsername(username) {
+// Function to log users table data and verify database connection
+async function logUsersTable() {
     try {
         const pool = await poolPromise;
-        const res = await pool.request()
-            .input('Username', sql.NVarChar, username)
-            .query('SELECT * FROM Users WHERE Username = @Username');
-        return res.recordset[0];
+        const result = await pool.request().query('SELECT * FROM dbo.Users');
+        console.log('Users Table Data:');
+        console.table(result.recordset);
     } catch (err) {
-        console.error('❌ Error fetching user by username:', err);
-        throw err;
+        console.error('Error fetching users table:', err);
     }
 }
 
-export { sql, poolPromise, getUserByUsername };
+// Log users table when server starts
+logUsersTable();
+
+// Start the server
+const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+    console.error('Server failed to start:', err.message);
+});

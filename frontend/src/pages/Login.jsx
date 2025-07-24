@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../style/Login.module.css";
 
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+
 export default function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
@@ -23,7 +25,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
+      const response = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -34,10 +36,15 @@ export default function Login() {
       if (response.ok) {
         navigate("/dashboard"); // Redirect to a dashboard page after login
       } else {
-        setError(data.message || "خطایی رخ داد.");
+        // Show detailed error if available
+        let errorMsg = data?.message ?? "خطایی رخ داد.";
+        if (data?.error) {
+          errorMsg += ': ' + data.error;
+        }
+        setError(errorMsg);
       }
     } catch (err) {
-      setError("خطا در اتصال به سرور.");
+      setError("خطا در اتصال به سرور: " + err.message);
       console.error("Login error:", err);
     } finally {
       setBusy(false);
