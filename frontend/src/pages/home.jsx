@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Correct import
 import styles from "../style/home.module.css";
 import {
   FiShoppingCart,
@@ -26,7 +27,7 @@ const cards = [
     expiry: "۱۴۰۵/۱۲/۲۹",
     expiryLabel: "تاریخ انقضا",
     footer: "کیف پول (تا ۱۰٪ برگشت نقدی)",
-    cardNumber: "1234567812341234", // Added for dynamic card number
+    cardNumber: "1234567812341234",
   },
   {
     banner: "",
@@ -113,18 +114,16 @@ const actionSets = [
 
 /* ---------- components ---------- */
 const WalletCard = ({ data, animateKey }) => {
-  // Format card number to display in groups of 4 digits, left to right
   const formatCardNumber = (number) => {
     if (!number) return "•••• •••• •••• ••••";
     return number.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, "$1 $2 $3 $4");
   };
 
-  // Format expiry date to English format (MM/YY)
   const formatExpiryDate = (date) => {
     if (!date) return "••/••";
     try {
       const d = new Date(date);
-      if (isNaN(d.getTime())) return "••/••"; // Handle invalid dates
+      if (isNaN(d.getTime())) return "••/••";
       const month = String(d.getMonth() + 1).padStart(2, "0");
       const year = String(d.getFullYear()).slice(-2);
       return `${month}/${year}`;
@@ -183,25 +182,22 @@ const ActionItem = ({ icon, label, subtitle }) => (
   </div>
 );
 
-const BottomNav = () => {
+const BottomNav = ({ navigate }) => {
   const navItems = [
-    { id: 1, label: "تراکنش‌ها", icon: <FiList /> },
-    { id: 2, label: "اقساط", icon: <FiTrendingUp /> },
-    { id: 3, label: "فروشگاه‌ها", icon: <FiShoppingBag /> },
-    { id: 4, label: "خدمات", icon: <FiGrid /> },
-    { id: 5, label: "کیف‌ها", icon: <FiCreditCard /> },
+    { id: 1, label: "تراکنش‌ها", icon: <FiList />, path: "/transactions" },
+    { id: 2, label: "اقساط", icon: <FiTrendingUp />, path: "/installments" },
+    { id: 3, label: "فروشگاه‌ها", icon: <FiShoppingBag />, path: "/stores" },
+    { id: 4, label: "خدمات", icon: <FiGrid />, path: "/services" },
+    { id: 5, label: "کیف‌ها", icon: <FiCreditCard />, path: "/wallets" },
   ];
-  const [active, setActive] = useState(5);
 
   return (
     <nav className={styles["bottom-nav"]}>
-      {navItems.map(({ id, label, icon }) => (
+      {navItems.map(({ id, label, icon, path }) => (
         <button
           key={id}
-          className={`${styles["nav-btn"]} ${
-            active === id ? styles.active : ""
-          }`}
-          onClick={() => setActive(id)}
+          className={styles["nav-btn"]}
+          onClick={() => navigate(path)}
         >
           {icon}
           <span>{label}</span>
@@ -213,7 +209,6 @@ const BottomNav = () => {
 
 /* ---------- main page component ---------- */
 const Home = () => {
-  /* Lock body scroll ONLY while Home is mounted */
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -224,6 +219,7 @@ const Home = () => {
 
   const [idx, setIdx] = useState(0);
   const cooldown = useRef(false);
+  const navigate = useNavigate(); // This should now work with correct import
 
   useEffect(() => {
     const step = (dir) => setIdx((i) => (i + dir + cards.length) % cards.length);
@@ -298,7 +294,7 @@ const Home = () => {
           ))}
         </div>
 
-        <BottomNav />
+        <BottomNav navigate={navigate} />
       </div>
     </div>
   );

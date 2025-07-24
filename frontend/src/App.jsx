@@ -6,6 +6,11 @@ import Profile from "./pages/Profile.jsx";
 import CardTransfer from "./pages/CardTransfer.jsx";
 import MyQrCode from "./pages/MyQrCode.jsx";
 import Header from "./components/Header.jsx";
+import Transactions from "./pages/Transactions.jsx";
+import Installments from "./pages/Installments.jsx";
+import Stores from "./pages/Stores.jsx";
+import Services from "./pages/Services.jsx";
+import Wallets from "./pages/Home.jsx";
 
 export default function App() {
   /* All routes in one place */
@@ -15,7 +20,12 @@ export default function App() {
     { path: "/login", element: <Login /> },
     { path: "/profile", element: <Profile /> },
     { path: "/card-transfer", element: <CardTransfer /> },
-    { path: "/my-qr-code", element: <MyQrCode /> }
+    { path: "/my-qr-code", element: <MyQrCode /> },
+    { path: "/transactions", element: <Transactions /> },
+    { path: "/installments", element: <Installments /> },
+    { path: "/stores", element: <Stores /> },
+    { path: "/services", element: <Services /> },
+    { path: "/wallets", element: <Wallets /> },
   ]);
 
   return (
