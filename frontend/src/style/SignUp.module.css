@@ -1,0 +1,156 @@
+/* ------------------------------------------------------------------
+   RESET + فونت فارسی (فقط داخل .signupRoot)
+   ------------------------------------------------------------------ */
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600&display=swap");
+
+.signupRoot,
+.signupRoot *,
+.signupRoot *::before,
+.signupRoot *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Vazirmatn → fallback به IRANSans */
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+}
+
+.signupRoot {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  direction: rtl;
+  color: #263238;
+  overflow: hidden;
+}
+
+/* --------------- پس‌زمینهٔ متحرک --------------- */
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(135deg, #ff66b2 0%, #6b6bff 50%, #00b7ff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+@keyframes float {
+  0%   { transform: translateY(0) rotate(0);  opacity: .6; }
+  100% { transform: translateY(-110vh) rotate(360deg); opacity: .1; }
+}
+.animated-bg span {
+  position: absolute;
+  display: block;
+  width: 18vmin; height: 18vmin;
+  background: rgba(255,255,255,.09);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  animation: float 14s linear infinite;
+  top: 110%;
+}
+.animated-bg span:nth-child(odd)   { width: 22vmin; height: 22vmin; }
+.animated-bg span:nth-child(3n+2) { width: 14vmin; height: 14vmin; }
+.animated-bg span:nth-child(1 ){ left:15%; animation-delay:0s; }
+.animated-bg span:nth-child(2 ){ left:35%; animation-delay:2.5s; }
+.animated-bg span:nth-child(3 ){ left:55%; animation-delay:5s; }
+.animated-bg span:nth-child(4 ){ left:75%; animation-delay:7.5s; }
+.animated-bg span:nth-child(5 ){ left:25%; animation-delay:10s; }
+.animated-bg span:nth-child(6 ){ left:65%; animation-delay:12.5s; }
+.animated-bg span:nth-child(7 ){ left:45%; animation-delay:15s; }
+.animated-bg span:nth-child(8 ){ left:85%; animation-delay:17.5s; }
+
+/* --------------- کارت شیشه‌ای --------------- */
+.card {
+  width: 92%;
+  max-width: 420px;
+  padding: 32px 28px 40px;
+  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,.20);
+  border-radius: 28px;
+  box-shadow: 0 10px 26px rgba(0,0,0,.14);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: center;
+  animation: pop .5s ease;
+}
+@keyframes pop {
+  0%   { transform: translateY(40px) scale(.95); opacity: 0; }
+  100% { transform: translateY(0)   scale(1);   opacity: 1; }
+}
+
+.card h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #fff;
+}
+.card h2 span { color: #ffd166; }
+
+.error {
+  background: rgba(255, 82, 82, .15);
+  color: #ff5252;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: .85rem;
+}
+
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  font-size: .95rem;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,.35);
+  color: #263238;
+  transition: background .25s, transform .25s;
+}
+input::placeholder { color:#546e7a; }
+input:focus {
+  outline: none;
+  background: rgba(255,255,255,.55);
+  transform: scale(1.03);
+}
+
+button {
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  background: #ffd166;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .25s, transform .25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+button:hover      { background:#ffca5c; transform: translateY(-2px); }
+button:active     { background:#ffbc32; transform: translateY(0);    }
+button:disabled   { opacity:.6; cursor:not-allowed; transform:none; }
+
+.alt {
+  margin-top: 10px;
+  font-size: .8rem;
+}
+.alt a {
+  color: #ffd166;
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+}
+.alt a:hover { opacity: .8; }
+
+/* --------------- اسپینر --------------- */
+.loader {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

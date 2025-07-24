@@ -1,0 +1,139 @@
+  /* ===== CSS RESET LOCAL TO THIS MODULE ===== */
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  /* ------------- colors & fonts ------------- */
+  :root{
+    --bg1:#313866;
+    --bg2:#5040ff;
+    --bg3:#7b5dff;
+    --glass:rgba(255,255,255,.14);
+    --border:rgba(255,255,255,.22);
+    --txt-light:#eef2ff;
+    --accent:#ffde59;
+    font-family:"Vazirmatn","IRANSans",sans-serif;
+  }
+
+  /* ------------- layout wrappers ------------ */
+  .root{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+    direction:rtl;color:var(--txt-light);
+  }
+  .container{
+    width:min(94vw,900px);
+    display:grid;
+    grid-template-columns:1fr;
+    gap:32px;z-index:2;
+  }
+  @media (min-width:720px){
+    .container{grid-template-columns:1fr 1fr}
+  }
+
+  /* ------------- blurred gradient backdrop --- */
+  .bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+  .bg::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2) 50%,var(--bg3));
+    animation:hue 20s linear infinite alternate;
+  }
+  @keyframes hue{to{filter:hue-rotate(-40deg)}}
+  .bg span{
+    position:absolute;width:18vmin;height:18vmin;border-radius:50%;
+    background:rgba(255,255,255,.05);backdrop-filter:blur(6px);
+    animation:float 18s linear infinite;
+    top:110%;
+  }
+  @keyframes float{
+    to{transform:translateY(-140vh) rotate(360deg);opacity:.1}
+  }
+  /* positions */
+  .bg span:nth-child(1){left:10%;animation-delay:0s}
+  .bg span:nth-child(2){left:30%;animation-delay:3s}
+  .bg span:nth-child(3){left:50%;animation-delay:6s}
+  .bg span:nth-child(4){left:70%;animation-delay:1.5s}
+  .bg span:nth-child(5){left:85%;animation-delay:4.5s}
+  .bg span:nth-child(6){left:15%;animation-delay:7s}
+  .bg span:nth-child(7){left:40%;animation-delay:8.5s}
+  .bg span:nth-child(8){left:65%;animation-delay:5.5s}
+
+  /* ------------- profile glass card ---------- */
+  .profileCard{
+    backdrop-filter:blur(30px) saturate(1.6);
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:24px;padding:48px 26px 36px;
+    text-align:center;display:flex;flex-direction:column;gap:22px;
+    animation:enter .6s ease both;
+  }
+  @keyframes enter{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:none}}
+
+  .avatarRing{
+    width:110px;height:110px;margin-inline:auto;padding:4px;border-radius:50%;
+    background:conic-gradient(var(--bg3),var(--bg2) 60%,var(--bg1));
+  }
+  .avatar{
+    width:100%;height:100%;border-radius:50%;
+    display:grid;place-items:center;
+    background:rgba(255,255,255,.25);
+    font-size:2rem;font-weight:700;color:#fff;
+  }
+  .name{font-size:1.4rem;font-weight:700}
+  .phone{opacity:.85;font-size:.9rem;margin-top:-6px}
+  .infoList{list-style:none;font-size:.88rem;text-align:right;display:flex;flex-direction:column;gap:6px}
+  .infoList li{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:6px}
+  .infoList li:last-child{border:none}
+  .buttons{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .buttons button{
+    flex:1 1 150px;border:none;border-radius:12px;
+    background:rgba(255,255,255,.22);color:#fff;
+    padding:10px 14px;display:flex;align-items:center;justify-content:center;gap:6px;
+    font-size:.85rem;cursor:pointer;transition:background .25s,transform .18s;
+  }
+  .buttons button:hover{background:rgba(255,255,255,.28)}
+  .buttons button:active{transform:scale(.97)}
+
+  /* ------------- modern bank card ------------ */
+  .bankCard{
+    position:relative;
+    aspect-ratio:16/9;border-radius:20px;padding:28px 32px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    background:linear-gradient(135deg,#2b3cff 0%,#4a3bff 45%,#8f5fff 100%);
+    color:#fff;box-shadow:0 18px 40px rgba(0,0,0,.35);
+    transition:transform .5s;perspective:1000px;
+  }
+  .bankCard:hover{transform:rotateX(6deg) rotateY(-6deg) scale(1.05)}
+
+  .cardHeader{display:flex;justify-content:space-between;align-items:center}
+  .cardIcon{font-size:1.8rem}
+  .bankName{font-weight:600;letter-spacing:.5px}
+
+  .pan{font-family:"SFMono-Regular",monospace;font-size:1.35rem;letter-spacing:2px;text-align:center;direction:ltr}
+  .detailRow{display:flex;justify-content:space-between;font-size:.8rem;margin-top:auto}
+  .detailRow div{display:flex;flex-direction:column;align-items:center}
+  .detailRow small{opacity:.7;font-size:.7rem}
+
+  .balanceBadge{
+    position:absolute;right:8%;bottom:28%;
+    background:rgba(0,0,0,.25);backdrop-filter:blur(4px);
+    padding:6px 14px;border-radius:12px;font-weight:600;display:flex;align-items:center;gap:4px
+  }
+  .balanceBadge small{font-size:.75rem;font-weight:400}
+
+  .cardFooter{
+    font-size:.74rem;opacity:.85;text-align:center;margin-top:auto
+  }
+
+  /* ------------- overlays -------------------- */
+  .loading,.error{
+    position:absolute;inset:0;display:grid;place-items:center;font-size:.9rem
+  }
+  .error{color:#ffb0b0}
+
+  /* =========================================== */
+/* ---------------- logout button accent --------------- */
+.logoutBtn{
+  background:rgba(255,84,84,.26);
+  transition:background .25s,transform .18s;
+}
+.logoutBtn:hover{background:rgba(255,84,84,.35)}
+.logoutBtn:active{transform:scale(.97)}

@@ -1,0 +1,459 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap");
+
+/* ------------------------------------------------------------------
+   GLOBAL RESET FOR PAYMENT PAGE
+   Everything is prefixed with .paymentRoot to prevent style leakage.
+   ------------------------------------------------------------------ */
+.paymentRoot,
+.paymentRoot *,
+.paymentRoot *::before,
+.paymentRoot *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+.paymentRoot {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  direction: rtl;
+  scroll-behavior: smooth;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #263238;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f6f9;
+}
+
+/* ------------------------------------------------------------------
+   ANIMATED BACKGROUND
+   ------------------------------------------------------------------ */
+.animatedBg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(125deg, #6b6bff 0%, #3c7aff 50%, #00b6ff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+  overflow: hidden;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Large particles (original) */
+.animatedBg span.large {
+  position: absolute;
+  display: block;
+  width: 18vmin;
+  height: 18vmin;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  animation: float 12s linear infinite;
+  top: 110%;
+  box-shadow: 0 0 20px rgba(0, 182, 255, 0.3);
+}
+
+.animatedBg span.large:nth-child(odd) {
+  width: 22vmin;
+  height: 22vmin;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.animatedBg span.large:nth-child(3n + 2) {
+  width: 14vmin;
+  height: 14vmin;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.animatedBg span.large:nth-child(1) { left: 10%; animation-delay: 0s; }
+.animatedBg span.large:nth-child(2) { left: 25%; animation-delay: 2s; }
+.animatedBg span.large:nth-child(3) { left: 40%; animation-delay: 4s; }
+.animatedBg span.large:nth-child(4) { left: 55%; animation-delay: 1s; }
+.animatedBg span.large:nth-child(5) { left: 70%; animation-delay: 3s; }
+.animatedBg span.large:nth-child(6) { left: 85%; animation-delay: 5s; }
+.animatedBg span.large:nth-child(7) { left: 15%; animation-delay: 6s; }
+.animatedBg span.large:nth-child(8) { left: 35%; animation-delay: 7s; }
+.animatedBg span.large:nth-child(9) { left: 60%; animation-delay: 8s; }
+.animatedBg span.large:nth-child(10) { left: 80%; animation-delay: 9s; }
+
+/* Small bubbles (new addition) */
+.animatedBg span.small {
+  position: absolute;
+  display: block;
+  width: 8vmin;
+  height: 8vmin;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(2px);
+  border-radius: 50%;
+  animation: floatSmall 8s linear infinite;
+  top: 110%;
+  box-shadow: 0 0 10px rgba(0, 182, 255, 0.4);
+}
+
+.animatedBg span.small:nth-child(11) { left: 5%; animation-delay: 0.5s; }
+.animatedBg span.small:nth-child(12) { left: 20%; animation-delay: 1.5s; }
+.animatedBg span.small:nth-child(13) { left: 35%; animation-delay: 2.5s; }
+.animatedBg span.small:nth-child(14) { left: 50%; animation-delay: 3.5s; }
+.animatedBg span.small:nth-child(15) { left: 65%; animation-delay: 4.5s; }
+.animatedBg span.small:nth-child(16) { left: 80%; animation-delay: 5.5s; }
+.animatedBg span.small:nth-child(17) { left: 15%; animation-delay: 6.5s; }
+.animatedBg span.small:nth-child(18) { left: 30%; animation-delay: 7.5s; }
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-55vh) rotate(180deg) scale(1.1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(360deg);
+    opacity: 0.1;
+  }
+}
+
+@keyframes floatSmall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-60vh) rotate(90deg) scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(180deg) scale(1);
+    opacity: 0.2;
+  }
+}
+
+/* ------------------------------------------------------------------
+   FORM CONTAINER
+   ------------------------------------------------------------------ */
+.paymentContainer {
+  max-width: 680px;
+  width: 94%;
+  margin: 24px auto;
+  padding: 48px 28px 120px; /* Increased bottom padding to avoid footer overlap */
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15), 0 0 40px rgba(0, 182, 255, 0.2);
+  backdrop-filter: blur(16px) saturate(1.5);
+  animation: slideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing pulse effect for form container */
+.paymentContainer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  box-shadow: 0 0 20px rgba(0, 182, 255, 0.3);
+  animation: pulseGlow 4s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 182, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 182, 255, 0.5); }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(60px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.paymentContainer h1 {
+  color: #263238;
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 36px;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ------------------------------------------------------------------
+   CARD PREVIEW
+   ------------------------------------------------------------------ */
+.cardPreview {
+  position: relative;
+  background: linear-gradient(135deg, #6b6bff, #00b6ff);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 36px;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 182, 255, 0.3);
+  overflow: hidden;
+  animation: cardFadeIn 0.9s ease-out;
+  transition: transform 0.3s ease;
+}
+
+.cardPreview:hover {
+  transform: perspective(1000px) rotateY(5deg) rotateX(3deg);
+}
+
+.cardPreview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 0 10px,
+    rgba(255, 255, 255, 0.12) 10px 20px
+  );
+  background-size: 200%;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: scale(0.94) rotateX(-5deg); }
+  to { opacity: 1; transform: scale(1) rotateX(0deg); }
+}
+
+.cardIcon {
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.cardNumber {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  font-family: monospace;
+  position: relative;
+  z-index: 1;
+}
+
+.cardDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------
+   FORM STYLES
+   ------------------------------------------------------------------ */
+.paymentForm {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.formGroup {
+  position: relative;
+  text-align: right;
+}
+
+label {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+input:focus {
+  border-color: #00b6ff;
+  box-shadow: 0 0 12px rgba(0, 182, 255, 0.5);
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: block;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ------------------------------------------------------------------
+   SUBMIT BUTTON
+   ------------------------------------------------------------------ */
+.submitButton {
+  padding: 18px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #3c7aff, #00b6ff);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 182, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.submitButton::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.submitButton:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.submitButton:hover {
+  background: linear-gradient(90deg, #2a5bff, #008ecc);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 182, 255, 0.5);
+}
+
+.submitButton:active {
+  transform: scale(0.97);
+}
+
+.submitButton:disabled {
+  background: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------
+   STATUS MESSAGE
+   ------------------------------------------------------------------ */
+.statusMessage {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+}
+
+.statusMessage.success {
+  color: #00cc00;
+}
+
+.statusMessage.error {
+  color: #ff6b6b;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------------------------
+   BOTTOM NAVIGATION
+   ------------------------------------------------------------------ */
+.bottomNav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 600px;
+  height: 88px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 40px rgba(0, 182, 255, 0.2);
+  animation: navSlideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes navSlideIn {
+  from { transform: translateX(-50%) translateY(30px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  font-size: 1.9rem;
+  color: #607d8b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 12px;
+}
+
+.navBtn:hover {
+  color: #00b6ff;
+  transform: scale(1.15) rotate(5deg);
+}
+
+.navBtn.active {
+  color: #00b6ff;
+  transform: scale(1.2);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+/* ------------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .paymentContainer {
+    padding: 36px 20px 100px; /* Adjusted bottom padding for smaller screens */
+  }
+
+  .paymentContainer h1 {
+    font-size: 2rem;
+  }
+
+  .cardPreview {
+    padding: 20px;
+  }
+
+  .bottomNav {
+    height: 80px;
+    width: calc(100% - 32px);
+  }
+
+  .navBtn {
+    font-size: 1.7rem;
+  }
+}

@@ -1,0 +1,153 @@
+/* ------------------------------------------------------------------
+   RESET + فارسی‌سازی (scope: .loginRoot)
+   ------------------------------------------------------------------ */
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600&display=swap");
+
+.loginRoot,
+.loginRoot *,
+.loginRoot *::before,
+.loginRoot *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Vazirmatn", "IRANSans", sans-serif;
+}
+
+.loginRoot {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  direction: rtl;
+  color: #263238;
+  overflow: hidden;
+}
+
+/* ----------------- پس‌زمینهٔ متحرک ----------------- */
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(140deg, #00c6ff 0%, #3c7aff 50%, #6b6bff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 7s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+@keyframes float {
+  0%   { transform: translateY(0) rotate(0);  opacity:.6; }
+  100% { transform: translateY(-110vh) rotate(360deg); opacity:.1; }
+}
+.animated-bg span {
+  position: absolute;
+  display: block;
+  width: 18vmin; height: 18vmin;
+  background: rgba(255,255,255,.07);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  animation: float 12s linear infinite;
+  top: 110%;
+}
+.animated-bg span:nth-child(1){ left:18%; animation-delay:0s; }
+.animated-bg span:nth-child(2){ left:38%; animation-delay:2s; }
+.animated-bg span:nth-child(3){ left:58%; animation-delay:4s; }
+.animated-bg span:nth-child(4){ left:78%; animation-delay:6s; }
+.animated-bg span:nth-child(5){ left:28%; animation-delay:8s; }
+.animated-bg span:nth-child(6){ left:68%; animation-delay:10s; }
+
+/* ----------------- کارت شیشه‌ای ----------------- */
+.card {
+  width: 92%;
+  max-width: 380px;
+  padding: 30px 26px 36px;
+  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,.22);
+  border-radius: 26px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.14);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: center;
+  animation: pop .5s ease;
+}
+@keyframes pop {
+  0%   { transform: translateY(40px) scale(.95); opacity: 0; }
+  100% { transform: translateY(0)   scale(1);   opacity: 1; }
+}
+
+.card h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #fff;
+}
+.card h2 span { color:#ffdc60; }
+
+/* پیام خطا */
+.error {
+  background: rgba(255, 82, 82, .15);
+  color: #ff5252;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: .85rem;
+}
+
+/* فیلدها */
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  font-size: .95rem;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,.35);
+  color: #263238;
+  transition: background .25s, transform .25s;
+}
+input::placeholder { color:#546e7a; }
+input:focus {
+  outline: none;
+  background: rgba(255,255,255,.55);
+  transform: scale(1.03);
+}
+
+/* دکمه */
+button {
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  background: #ffdc60;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .25s, transform .25s;
+  display:flex; align-items:center; justify-content:center;
+}
+button:hover      { background:#ffe27b; transform: translateY(-2px); }
+button:active     { background:#ffd44a; transform: translateY(0);    }
+button:disabled   { opacity:.6; cursor:not-allowed; transform:none; }
+
+/* لینک ثبت‌نام */
+.alt {
+  margin-top: 10px;
+  font-size: .8rem;
+}
+.alt a {
+  color: #ffdc60;
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+}
+.alt a:hover { opacity: .8; }
+
+/* اسپینر */
+.loader {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

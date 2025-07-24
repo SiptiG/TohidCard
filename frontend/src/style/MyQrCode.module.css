@@ -1,0 +1,165 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600&display=swap");
+
+.myQrCodeRoot {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  direction: rtl;
+  font-family: "Vazirmatn", sans-serif;
+  color: #263238;
+}
+
+.header {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #6b6bff, #00b6ff);
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+}
+
+.welcome {
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-inline-end: 12px;
+  pointer-events: none;
+}
+
+.menuButton {
+  color: #fff;
+  font-size: 2.2rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1);   opacity: 0.9; }
+  50%  { transform: scale(1.1); opacity: 1;   }
+  100% { transform: scale(1);   opacity: 0.9; }
+}
+
+.animatedBg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(125deg, #6b6bff 0%, #3c7aff 50%, #00b6ff 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animatedBg span {
+  position: absolute;
+  display: block;
+  width: 18vmin;
+  height: 18vmin;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+  animation: float 12s linear infinite;
+  top: 110%;
+}
+
+.animatedBg span:nth-child(odd) {
+  width: 22vmin;
+  height: 22vmin;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.animatedBg span:nth-child(3n + 2) {
+  width: 14vmin;
+  height: 14vmin;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(360deg);
+    opacity: 0.1;
+  }
+}
+
+.myQrCodeContainer {
+  max-width: 600px;
+  width: 92%;
+  margin: 0 auto;
+  padding: 80px 20px 100px;
+  text-align: center;
+}
+
+.myQrCodeContainer h1 {
+  color: #fff;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.qrCodeImage {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 520px;
+  height: 78px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 22px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #607d8b;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.navBtn:hover,
+.navBtn.active {
+  color: #1976d2;
+}
+
+@media (max-width: 768px) {
+  .myQrCodeContainer {
+    padding: 60px 10px 80px;
+  }
+
+  .myQrCodeContainer h1 {
+    font-size: 1.5rem;
+  }
+}
