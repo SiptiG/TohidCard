@@ -1,3 +1,4 @@
+// db.services.js (updated with getUserById function)
 import 'dotenv/config';
 import sql from 'mssql';
 
@@ -59,4 +60,17 @@ async function insertUser(username, passwordHash, salt, mobileNumber, firstName,
     }
 }
 
-export { sql, poolPromise, getUserByUsername, insertUser };
+async function getUserById(userId) {
+    try {
+        const pool = await poolPromise;
+        const res = await pool.request()
+            .input('UserID', sql.Int, userId)
+            .query('SELECT * FROM Users WHERE UserID = @UserID');
+        return res.recordset[0];
+    } catch (err) {
+        console.error('❌ Error fetching user by ID:', err);
+        throw err;
+    }
+}
+
+export { sql, poolPromise, getUserByUsername, insertUser, getUserById };

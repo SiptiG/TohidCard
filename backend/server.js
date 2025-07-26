@@ -1,49 +1,55 @@
+// server.js
 import express from 'express';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+
+import authRoutes from './routes/auth.routes.js';
+import { authenticateToken } from './middleware/auth.middleware.js';
 import { poolPromise } from './services/db.services.js';
-import authRoutes from './routes/authRoutes.js';
-import { authenticateToken } from './middleware/authMiddleware.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware setup
-app.use(express.json());        // Parse JSON request bodies
-app.use(cookieParser());        // Parse cookies for authentication
-app.use(cors({
-    origin: 'http://localhost:5173', // Allow frontend origin
-    credentials: true // Allow cookies/credentials
-}));
+/* ──────────────── MIDDLEWARE ──────────────── */
+app.use(express.json());            // body‑parser
+app.use(cookieParser());            // read/write cookies
 
-// Mount authentication routes
+app.use(
+    cors({
+        origin: 'http://localhost:5173', // React dev host
+        credentials: true               // allow cookies
+    })
+);
+
+/* ─────────────── ROUTES ─────────────── */
 app.use('/api/auth', authRoutes);
 
-// Sample protected route to test token/user identification
+/* demo protected route */
 app.get('/api/protected', authenticateToken, (req, res) => {
     res.json({ message: 'This is a protected route', user: req.user });
 });
 
-// Function to log users table data and verify database connection
+/* ────────── OPTIONAL: DB sanity check ───────── */
 async function logUsersTable() {
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM dbo.Users');
-        console.log('Users Table Data:');
+        console.log('── Users table snapshot ──');
         console.table(result.recordset);
     } catch (err) {
         console.error('Error fetching users table:', err);
     }
 }
-
-// Log users table when server starts
 logUsersTable();
 
-// Start the server
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+/* ─────────────── START ─────────────── */
+const server = app.listen(PORT, () =>
+    console.log(`API listening on http://localhost:${PORT}`)
+);
 
-server.on('error', (err) => {
-    console.error('Server failed to start:', err.message);
-});
+server.on('error', err =>
+    console.error('Server failed to start:', err.message)
+);

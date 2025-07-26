@@ -10,7 +10,7 @@ import Transactions from "./pages/Transactions.jsx";
 import Installments from "./pages/Installments.jsx";
 import Stores from "./pages/Stores.jsx";
 import Services from "./pages/Services.jsx";
-import Wallets from "./pages/Home.jsx";
+import UserData from "./pages/UserData.jsx"; // New import for UserData page
 
 export default function App() {
   /* All routes in one place */
@@ -25,7 +25,7 @@ export default function App() {
     { path: "/installments", element: <Installments /> },
     { path: "/stores", element: <Stores /> },
     { path: "/services", element: <Services /> },
-    { path: "/wallets", element: <Wallets /> },
+    { path: "/user-data", element: <UserData /> }, // New route for UserData
   ]);
 
   return (

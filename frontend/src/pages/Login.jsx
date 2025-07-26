@@ -10,10 +10,23 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = e =>
-    setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async e => {
+  const clearCookies = async () => {
+    try {
+      await fetch(`${API}/api/auth/clear-cookies`, {
+        method: "POST",
+        credentials: "include", // Ensure cookies are sent and cleared
+      });
+      console.log("Previous cookies cleared successfully");
+    } catch (err) {
+      console.error("Error clearing cookies:", err);
+      // Non-critical error; proceed with login attempt
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setBusy(true);
@@ -24,22 +37,25 @@ export default function Login() {
       return;
     }
 
+    // Clear existing cookies before login
+    await clearCookies();
+
     try {
       const response = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include" // Include cookies in the request
+        credentials: "include", // Include cookies in the request
       });
 
       const data = await response.json();
       if (response.ok) {
-        navigate("/dashboard"); // Redirect to a dashboard page after login
+        navigate("/dashboard"); // Redirect to dashboard after successful login
       } else {
         // Show detailed error if available
         let errorMsg = data?.message ?? "خطایی رخ داد.";
         if (data?.error) {
-          errorMsg += ': ' + data.error;
+          errorMsg += ": " + data.error;
         }
         setError(errorMsg);
       }
@@ -53,10 +69,16 @@ export default function Login() {
 
   return (
     <div className={styles.loginRoot}>
-      <div className={styles["animated-bg"]}>{[...Array(6)].map((_, i) => <span key={i} />)}</div>
+      <div className={styles["animated-bg"]}>
+        {[...Array(6)].map((_, i) => (
+          <span key={i} />
+        ))}
+      </div>
 
       <form className={styles.card} onSubmit={handleSubmit}>
-        <h2>ورود به <span>کیف هوشمند</span></h2>
+        <h2>
+          ورود به <span>کیف هوشمند</span>
+        </h2>
         {error && <p className={styles.error}>{error}</p>}
         <input
           type="text"

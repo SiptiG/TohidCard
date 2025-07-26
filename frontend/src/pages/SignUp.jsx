@@ -6,7 +6,7 @@ const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
-    username: "", email: "", number: "", password: "", firstName: "", lastName: "", nationalID: ""
+    username: "", number: "", password: "", firstName: "", lastName: "", nationalID: ""
   });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -17,8 +17,8 @@ export default function SignUp() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const { username, email, number, password, firstName, lastName, nationalID } = formData;
-    if (!username || !email || !number || !password || !firstName || !lastName || !nationalID)
+    const { username, number, password, firstName, lastName, nationalID } = formData;
+    if (!username || !number || !password || !firstName || !lastName || !nationalID)
       return setError("تمام فیلدها الزامی‌ست.");
 
     try {
@@ -57,7 +57,6 @@ export default function SignUp() {
         {error && <p className={styles.error}>{error}</p>}
 
         <input name="username" placeholder="نام کاربری" onChange={handleChange} value={formData.username} />
-        <input type="email" name="email" placeholder="ایمیل" onChange={handleChange} value={formData.email} />
         <input name="number" placeholder="شماره تلفن" onChange={handleChange} value={formData.number} />
         <input name="firstName" placeholder="نام" onChange={handleChange} value={formData.firstName} />
         <input name="lastName" placeholder="نام خانوادگی" onChange={handleChange} value={formData.lastName} />
